@@ -6,11 +6,11 @@ Android app (Kotlin / Jetpack Compose) submitted for OPSC7311.
 
 | Name              | Student Number |
 |-------------------|-----------------|
-| Sechaba Mokoena   | *TBC*           |
-| Sufyaan Albertus   | ST10436103      |
-| Latita Mvunelo    | *TBC*           |
-| Sandile Duba      | *TBC*           |
-| Rea Moloi         | *TBC*           |
+| Sechaba Mokoena   | ST10453270      |
+| Sufyaan Albertus  | ST10436103      |
+| Latita Mvunelo    | ST10093388      |
+| Sandile Duba      | ST10262263      |
+| Rea Moloi         | ST10443585      |
 
 
 ## Demo video
