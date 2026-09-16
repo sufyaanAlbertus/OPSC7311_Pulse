@@ -28,15 +28,25 @@ Follow these steps in order on a fresh clone/download of this repo.
    - Android SDK Platform **34** and **36** via Tools > SDK Manager > SDK Platforms
    - Android SDK Command-line Tools (latest) via Tools > SDK Manager > SDK Tools
 
-2. **Open the project correctly.** Clone the repo, then in Android Studio go **File > Open** and
-   navigate to: `<repo-name>/Pulse` — the folder that directly contains `app/`, `gradle/`,
-   `gradlew`, `settings.gradle.kts`, and this `README.md` as siblings. Select that folder and
-   click Open — not its parent, and not the `app` folder itself. Opening the wrong level is the
-   single most common cause of "Task not found in project" sync errors.
+2. **Open the project correctly.** Clone/download the repo, then in Android Studio go
+   **File > Open** and navigate into: `Pulse_Project_Android_Studio_Files/Pulse` — the folder
+   that directly contains `app/`, `gradle/`, `gradlew`, `settings.gradle.kts`, and this
+   `README.md` as siblings. Select that `Pulse` folder itself and click Open — not
+   `Pulse_Project_Android_Studio_Files`, and not the `app` folder inside `Pulse`. Opening the
+   wrong level is the single most common cause of "Task not found in project" sync errors.
 
 3. **Let Gradle sync.** The project ships with a real Gradle wrapper (`gradlew`, `gradlew.bat`,
    `gradle/wrapper/gradle-wrapper.jar`), so no separate Gradle install is needed. First sync
    downloads Gradle 8.9 and all dependencies — this can take a few minutes.
+
+4. **Run the app.** Once sync finishes, either:
+   - Press the green **Run** button in Android Studio with an emulator or device selected, **or**
+   - Build the APK manually and install it by hand:
+     1. **Build > Build App Bundle(s) / APK(s) > Build APK(s)** and wait for the build to finish.
+     2. The output APK lands at `Pulse/app/build/outputs/apk/debug/app-debug.apk`.
+     3. Start an emulator from **Device Manager** and wait until it's fully booted to the home screen.
+     4. Drag `app-debug.apk` from File Explorer straight onto the running emulator window — the
+        emulator installs it automatically and it'll appear in the app drawer as **Pulse**.
 
 ---
 
