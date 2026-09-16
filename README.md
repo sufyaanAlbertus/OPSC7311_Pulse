@@ -27,6 +27,12 @@ Follow these steps in order on a fresh clone/download of this repo.
    - Android Studio (Koala or newer)
    - Android SDK Platform **34** and **36** via Tools > SDK Manager > SDK Platforms
    - Android SDK Command-line Tools (latest) via Tools > SDK Manager > SDK Tools
+   - Double-check under **SDK Tools** that your SDK Build-Tools, Platform-Tools and Emulator
+     versions are all up to date and match — a mismatched/outdated SDK Tools version is a common
+     cause of sync or install failures.
+   - Create an emulator via **Device Manager > Create Device** using a **Pixel 8** device
+     profile on **API 34**, just in case you need one to test on. If Android Studio requires a
+     newer system image to create or run it, pick **API 37** instead when prompted on setup.
 
 2. **Open the project correctly.** Clone/download the repo, then in Android Studio go
    **File > Open** and navigate into: `Pulse_Project_Android_Studio_Files/Pulse` — the folder
@@ -39,14 +45,26 @@ Follow these steps in order on a fresh clone/download of this repo.
    `gradle/wrapper/gradle-wrapper.jar`), so no separate Gradle install is needed. First sync
    downloads Gradle 8.9 and all dependencies — this can take a few minutes.
 
-4. **Run the app.** Once sync finishes, either:
-   - Press the green **Run** button in Android Studio with an emulator or device selected, **or**
-   - Build the APK manually and install it by hand:
-     1. **Build > Build App Bundle(s) / APK(s) > Build APK(s)** and wait for the build to finish.
-     2. The output APK lands at `Pulse/app/build/outputs/apk/debug/app-debug.apk`.
-     3. Start an emulator from **Device Manager** and wait until it's fully booted to the home screen.
-     4. Drag `app-debug.apk` from File Explorer straight onto the running emulator window — the
-        emulator installs it automatically and it'll appear in the app drawer as **Pulse**.
+4. **Run the app.** Once sync finishes, press the green **Run** button in Android Studio with
+   an emulator or device selected.
+
+---
+
+## Installing the pre-built APK
+
+If you'd rather skip building from source, a ready-to-install APK is included in the repo.
+
+1. Navigate to `Pulse_Apk_Build` and locate `app-debug.apk`.
+2. Start an emulator from **Device Manager** and wait until it's fully booted to the home screen.
+3. Drag `app-debug.apk` from File Explorer straight onto the running emulator window — the
+   emulator installs it automatically and it'll appear in the app drawer as **Pulse**.
+
+**Before testing**, double-check your setup:
+- Confirm your installed **SDK Tools** match what the project targets (see compileSdk/minSdk
+  in the quick reference below) — a mismatch is a common cause of install failures.
+- Use a **Pixel 8, API 34** emulator as your default test device.
+- If the emulator or SDK requires a newer platform to boot correctly, pick **API 37** instead
+  when creating/starting the device.
 
 ---
 
