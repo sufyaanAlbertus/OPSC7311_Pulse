@@ -15,7 +15,7 @@ Android app (Kotlin / Jetpack Compose) submitted for OPSC7311.
 
 ## Demo video
 
-`[VIDEO LINK GOES HERE]`
+`https://drive.google.com/file/d/1vIyDEQy-FRMihPeT8eQe4JgcCtjpMu3E/view?usp=sharing`
 
 ---
 
