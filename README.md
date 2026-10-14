@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/app-icon.png" width="110" alt="Pulse app icon" />
+  <img src="Docs/images/app-icon.png" width="110" alt="Pulse app icon" />
 </p>
 
 <h1 align="center">OPSC7311 — Pulse: Personal Budget Tracker</h1>
@@ -8,7 +8,7 @@
 <p align="center">
   <a href="../../releases/latest/download/Pulse.apk"><b>⬇️ Download Pulse.apk</b></a> ·
   <a href="https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID">▶️ Demo video</a> ·
-  <a href="docs/DEVELOPMENT.md">🛠️ Developer setup</a>
+  <a href="Docs/DEVELOPMENT.md">🛠️ Developer setup</a>
 </p>
 
 ---
@@ -29,7 +29,7 @@
 
 1. **On your Android phone** (Android 8.0 or newer), open this link and download the app:
    **👉 [Pulse.apk](../../releases/latest/download/Pulse.apk)**
-   *(also on the [Releases page](../../releases/latest))*
+   *(also on the [Releases page](../../releases/latest), and in the [`Pulse_Apk_Build`](Pulse_Apk_Build/) folder)*
 2. **Tap the downloaded file → Install.**
    - If asked, allow your browser to *install unknown apps* (this appears once).
    - If Google Play Protect says *"unrecognised app"*, tap **More details → Install anyway**. This shows for any app not installed from the Play Store.
@@ -62,8 +62,8 @@
 - 🌗 Dark and light mode
 
 ### Run it from the source code instead
-Open the repository's root folder in Android Studio and press **Run ▶**. Everything the build needs is included in the repo.
-For a full developer setup (versions, Firebase, tests), see **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)**.
+In Android Studio choose **File → Open** and select the **`Pulse_Project_Android_Studio_Files/Pulse`** folder (the one containing `settings.gradle.kts`), then press **Run ▶**. Everything the build needs is included in the repo.
+For a full developer setup (versions, Firebase, tests), see **[Docs/DEVELOPMENT.md](Docs/DEVELOPMENT.md)**.
 
 ---
 
@@ -120,7 +120,7 @@ The Part 3 video starts with a short introduction to Pulse, then shows every fea
 
 ## 🏗️ Architecture and online database
 
-![Architecture](docs/images/architecture.png)
+![Architecture](Docs/images/architecture.png)
 
 MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase. Calculations live in pure Kotlin files in `util/` so they can be unit-tested.
 
@@ -128,7 +128,7 @@ MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase
 - **Cloud Firestore:** all data is stored under `users/{uid}/…` (expenses, receipts, category goals, custom categories, badges). **Reads** use live snapshot listeners; **writes** use batches and a transaction (`data/repository/PulseRepository.kt`).
 - **Security rules:** a user can only read and write their own data.
 
-![Firestore structure](docs/images/firestore-structure.png)
+![Firestore structure](Docs/images/firestore-structure.png)
 
 **Logging:** `android.util.Log` throughout the repositories and ViewModels. In Logcat, filter by `PulseRepository` to see every Firestore read and write.
 
@@ -137,14 +137,14 @@ MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase
 ## 🔒 Security
 - **Strong passwords for new accounts:** at least 8 characters with upper- and lower-case letters, a number and a symbol, no spaces, not a common password, and not containing the username. A live checklist and strength bar on the Register screen show each rule as it's met (`util/Validation.kt`, `ui/components/PasswordStrength.kt`). There's also a show/hide password button.
 - **Passwords are never stored by the app.** Firebase Authentication hashes and stores them, keeps the user signed in securely, and blocks repeated wrong guesses ("Too many attempts").
-- **Server-side rules** ([`firestore.rules`](firestore.rules)): each user can only read and write their own data, and every expense, goal, category and photo is validated on the server (e.g. amount must be a positive number, the description is limited to 100 characters).
+- **Server-side rules** ([`firestore.rules`](Pulse_Project_Android_Studio_Files/Pulse/firestore.rules)): each user can only read and write their own data, and every expense, goal, category and photo is validated on the server (e.g. amount must be a positive number, the description is limited to 100 characters).
 - No passwords or personal data are written to the logs.
 
 ## 🔧 GitHub and GitHub Actions
 - Developed with Git and pushed regularly with descriptive commits (see the **commit history**).
 - **GitHub Actions** (`.github/workflows/build.yml`) runs on every push to `main`. It starts from a **fresh clone** of this repository (proving it can be cloned and built by anyone), runs all unit tests, builds the APK, and **publishes `Pulse.apk` to the [Releases page](../../releases/latest)** so the install link above always gives the newest working build.
 
-![GitHub Actions run](docs/images/screenshots/github-actions.png)
+![GitHub Actions run](Docs/images/screenshots/github-actions.png)
 
 ## ✅ Automated testing
 35 JUnit tests in `app/src/test/…` cover the goal maths (graph and 30-day tracker), recurring dates, badge rules and progress, the strong-password policy, input validation, the 7-day signal and currency formatting. Run them with `./gradlew testDebugUnitTest`.
@@ -161,12 +161,12 @@ MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase
 | Clearer feedback on progression and badge unlock criteria | Badges screen redesigned: every badge shows its rule, a progress bar ("3 / 7 days") and the earned date. The level card shows XP to the next level and how XP is earned |
 | Reference work and declare AI use | References section below, reference comments in the code, and an **AI declaration** |
 | APK should install directly on a phone without Android Studio | Every push automatically publishes **`Pulse.apk` to GitHub Releases**. The README starts with a 3-step phone install and a direct download link |
-| Android Studio instructions too complex | The main README now has a single line (open the folder → Run). Full developer setup moved to [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) |
+| Android Studio instructions too complex | The main README now has a single line (open the folder → Run). Full developer setup moved to [`Docs/DEVELOPMENT.md`](Docs/DEVELOPMENT.md) |
 | Project should run with the standard Run button | Everything the build needs is committed (Gradle wrapper, `google-services.json`); no local paths; no SDK-specific settings; GitHub Actions proves a fresh clone builds |
 | Improve security, implement strong passwords | Strong-password policy, live strength checklist, show/hide password, "too many attempts" protection, stricter server-side rules (see Security) |
 | Make budget progress, XP and achievements more prominent; bigger text and contrast | Dashboard: larger "left to spend" figure with a thick progress bar and %, a new **Your progress** card (level, XP bar, streak, badge count, next badge with progress). Larger text everywhere |
 | Video: add a short intro and reference the background music | Video starts with an introduction, and the background track is referenced in the video description and below |
-| Repository couldn't be cloned | Repository is public with the project at the root, no nested repos and no large files. Tested with a fresh `git clone` and build (see the green Actions run) |
+| Repository couldn't be cloned | Repository is now **public**. The Android project is in `Pulse_Project_Android_Studio_Files/Pulse`, the GitHub Actions workflow runs from the repository root, and every push is built from a fresh clone (see the green Actions run) |
 
 ---
 
@@ -174,15 +174,15 @@ MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase
 
 | Login | Dashboard | Add Expense |
 |---|---|---|
-| ![](docs/images/screenshots/login.png) | ![](docs/images/screenshots/dashboard.png) | ![](docs/images/screenshots/add-expense.png) |
+| ![](Docs/images/screenshots/login.png) | ![](Docs/images/screenshots/dashboard.png) | ![](Docs/images/screenshots/add-expense.png) |
 
 | Categories graph | Goals tracker | Badges |
 |---|---|---|
-| ![](docs/images/screenshots/categories-graph.png) | ![](docs/images/screenshots/goals-tracker.png) | ![](docs/images/screenshots/badges.png) |
+| ![](Docs/images/screenshots/categories-graph.png) | ![](Docs/images/screenshots/goals-tracker.png) | ![](Docs/images/screenshots/badges.png) |
 
 | Expenses | Data in Firestore |
 |---|---|
-| ![](docs/images/screenshots/expenses.png) | ![](docs/images/screenshots/firestore-console.png) |
+| ![](Docs/images/screenshots/expenses.png) | ![](Docs/images/screenshots/firestore-console.png) |
 
 ---
 
@@ -190,7 +190,7 @@ MVVM: Compose screens → ViewModels (`StateFlow`) → repositories → Firebase
 - Kotlin source code: this repository
 - APK: [Download Pulse.apk](../../releases/latest/download/Pulse.apk) ([Releases page](../../releases/latest))
 - Demo video: link at the top of this README
-- Part 1 research and design documents: [`docs/`](docs/)
+- Part 1 research and design documents: [`Docs/`](Docs/)
 
 ---
 
@@ -202,7 +202,7 @@ Our group used **Claude (Anthropic)** as a helper during Part 3. We used it for:
 - **Project setup and fixing problems:** help setting up Firebase, GitHub Actions and the project structure, and fixing build errors and conflicts.
 - **Documentation:** help drafting this README and the setup guides.
 
-We planned the app, set up Firebase, reviewed and changed the AI's suggestions, and tested everything ourselves. We understand and can explain all of the code. The signed declaration is in [`docs/AI_Declaration.pdf`](docs/AI_Declaration.pdf).
+We planned the app, set up Firebase, reviewed and changed the AI's suggestions, and tested everything ourselves. We understand and can explain all of the code. The signed declaration is in [`Docs/AI_Declaration.pdf`](Docs/AI_Declaration.pdf).
 
 ---
 
@@ -215,11 +215,11 @@ We planned the app, set up Firebase, reviewed and changed the AI's suggestions, 
 - Android Developers. 2025. *Guide to app architecture.* Available at: <https://developer.android.com/topic/architecture> [Accessed 14 October 2026].
 - Android Developers. 2025. *Graphics in Compose (Canvas).* Available at: <https://developer.android.com/develop/ui/compose/graphics/draw/overview> [Accessed 14 October 2026].
 - Android Developers. 2025. *Create adaptive icons.* Available at: <https://developer.android.com/develop/ui/views/launch/icon_design_adaptive> [Accessed 14 October 2026].
-- Firebase. 2025. *Add Firebase to your Android project.* Available at: <https://firebase.google.com/docs/android/setup> [Accessed 14 October 2026].
-- Firebase. 2025. *Authenticate with Firebase using password-based accounts on Android.* Available at: <https://firebase.google.com/docs/auth/android/password-auth> [Accessed 14 October 2026].
-- Firebase. 2025. *Cloud Firestore: get realtime updates, add data, transactions and batched writes.* Available at: <https://firebase.google.com/docs/firestore> [Accessed 14 October 2026].
-- Firebase. 2025. *Get started with Cloud Firestore Security Rules.* Available at: <https://firebase.google.com/docs/firestore/security/get-started> [Accessed 14 October 2026].
-- Kotlin. 2025. *Coroutines and Flow (callbackFlow).* Available at: <https://kotlinlang.org/docs/flow.html> [Accessed 14 October 2026].
+- Firebase. 2025. *Add Firebase to your Android project.* Available at: <https://firebase.google.com/Docs/android/setup> [Accessed 14 October 2026].
+- Firebase. 2025. *Authenticate with Firebase using password-based accounts on Android.* Available at: <https://firebase.google.com/Docs/auth/android/password-auth> [Accessed 14 October 2026].
+- Firebase. 2025. *Cloud Firestore: get realtime updates, add data, transactions and batched writes.* Available at: <https://firebase.google.com/Docs/firestore> [Accessed 14 October 2026].
+- Firebase. 2025. *Get started with Cloud Firestore Security Rules.* Available at: <https://firebase.google.com/Docs/firestore/security/get-started> [Accessed 14 October 2026].
+- Kotlin. 2025. *Coroutines and Flow (callbackFlow).* Available at: <https://kotlinlang.org/Docs/flow.html> [Accessed 14 October 2026].
 - GitHub Marketplace. n.d. *Automated build Android app with GitHub Action.* Available at: <https://github.com/marketplace/actions/automated-build-android-app-with-github-action> [Accessed 3 November 2025].
 - IMAD5112. n.d. *Github-actions/build.yml.* Available at: <https://github.com/IMAD5112/Github-actions/blob/main/.github/workflows/build.yml> [Accessed 3 November 2025].
 - Google Fonts. n.d. *Space Grotesk; IBM Plex Mono* (SIL Open Font License). Available at: <https://fonts.google.com> [Accessed 10 September 2026].
