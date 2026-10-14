@@ -52,14 +52,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.pulse.budget.data.local.CategoryType
-import com.pulse.budget.data.local.RecurrenceType
-import com.pulse.budget.ui.components.label
+import com.pulse.budget.data.model.CategoryType
+import com.pulse.budget.data.model.RecurrenceType
 import com.pulse.budget.ui.components.PulsePrimaryButton
 import com.pulse.budget.ui.components.PulseTextField
 import com.pulse.budget.ui.components.PulseTopBar
 import com.pulse.budget.ui.theme.MonoBody
 import com.pulse.budget.ui.theme.MonoSmall
+import com.pulse.budget.util.InputValidation
 import com.pulse.budget.viewmodel.ExpenseViewModel
 import java.time.Instant
 import java.time.LocalDate
@@ -69,8 +69,7 @@ import java.time.format.DateTimeFormatter
 
 private val TIME_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-/** null selectedCustomCategory means a built-in CategoryType is in use; a non-null value means
- *  the user picked (or just created) a custom category, and `category` is stored as OTHER. */
+/** Screen for adding an expense. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseScreen(
@@ -89,17 +88,11 @@ fun AddExpenseScreen(
     var showAddCategoryDialog by remember { mutableStateOf(false) }
     var newCategoryName by remember { mutableStateOf("") }
 
-    // Date: auto-filled with today the moment this screen opens. The user never has to type a
-    // date — tapping the field opens a calendar (DatePickerDialog) to change it if logging a
-    // past expense.
+    // Date: auto-filled with today the moment this screen opens.
     var date by remember { mutableStateOf(LocalDate.now()) }
     var showDatePicker by remember { mutableStateOf(false) }
 
-    // Start time: what time the spending activity began — auto-filled to the current time when
-    // this screen opens, same as the date. End time: what time it finished, left blank by
-    // default since not every expense has a clear end (a single purchase is instantaneous), but
-    // useful for anything that spans a period — a shopping trip, a meal out, a taxi ride — so you
-    // can later see not just what you spent but how long you spent it over.
+    // Start time: what time the spending activity began.
     var startTime by remember { mutableStateOf(LocalTime.now()) }
     var endTime by remember { mutableStateOf<LocalTime?>(null) }
     var showStartTimePicker by remember { mutableStateOf(false) }
@@ -111,13 +104,12 @@ fun AddExpenseScreen(
     var recurrenceType by remember { mutableStateOf(RecurrenceType.WEEKLY) }
     var amountError by remember { mutableStateOf(false) }
 
-    // Opens the system photo picker / gallery and returns a content Uri (Part 2 brief: "optionally
-    // add a photograph to each expense entry").
+    // Opens the system photo picker / gallery and returns a content Uri.
     val receiptPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? -> if (uri != null) receiptUri = uri }
 
-    val categoryDisplayLabel = selectedCustomCategory ?: category.label()
+    val categoryDisplayLabel = selectedCustomCategory ?: category.label
 
     Scaffold(topBar = { PulseTopBar(title = "Add Expense", isDark = isDark, onToggleTheme = onToggleTheme, onBack = onBack) }) { padding ->
         Column(
@@ -132,7 +124,8 @@ fun AddExpenseScreen(
                 value = amount,
                 onValueChange = { amount = it; amountError = false },
                 label = "Amount (R)",
-                isMonospace = true
+                isMonospace = true,
+                isNumber = true
             )
             if (amountError) {
                 Text("Enter a valid amount greater than 0", style = MonoSmall, color = MaterialTheme.colorScheme.error)
@@ -151,7 +144,7 @@ fun AddExpenseScreen(
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     CategoryType.entries.forEach { c ->
                         DropdownMenuItem(
-                            text = { Text(c.label()) },
+                            text = { Text(c.label) },
                             onClick = { category = c; selectedCustomCategory = null; expanded = false }
                         )
                     }
@@ -186,8 +179,7 @@ fun AddExpenseScreen(
             )
             Spacer(Modifier.height(12.dp))
 
-            // Start/end time — see the explanation above the variable declarations. Both auto-fill
-            // or stay blank sensibly, and both open a clock picker on tap rather than free typing.
+            // Start and end time pickers.
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 PickerField(
                     label = "Start time",
@@ -205,14 +197,7 @@ fun AddExpenseScreen(
                 )
             }
             Spacer(Modifier.height(4.dp))
-            Text(
-                "Start time is when the spending activity began (defaults to now). End time is " +
-                        "when it finished — useful for anything that spans a period, like a shopping " +
-                        "trip or a meal out. Leave end time blank for a single instant purchase.",
-                style = MonoSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
 
             PulseTextField(value = description, onValueChange = { if (it.length <= 100) description = it }, label = "Description (optional)")
             Text("${description.length}/100", style = MonoSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -224,7 +209,7 @@ fun AddExpenseScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Recurring expense", style = MaterialTheme.typography.bodyMedium)
+                Text("Repeat", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                 Switch(checked = isRecurring, onCheckedChange = { isRecurring = it })
             }
             if (isRecurring) {
@@ -264,11 +249,11 @@ fun AddExpenseScreen(
                         contentScale = ContentScale.Crop
                     )
                     Spacer(Modifier.height(4.dp))
-                    Text("Receipt attached — tap to change", style = MonoSmall, color = MaterialTheme.colorScheme.primary)
+                    Text("Receipt attached", style = MonoSmall, color = MaterialTheme.colorScheme.primary)
                 } else {
                     Icon(Icons.Outlined.Receipt, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(Modifier.height(4.dp))
-                    Text("Tap to attach a receipt photo", style = MonoSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Add receipt photo", style = MonoSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
@@ -276,8 +261,9 @@ fun AddExpenseScreen(
             PulsePrimaryButton(
                 text = "Save Expense",
                 onClick = {
-                    val amountValue = amount.toDoubleOrNull()
-                    if (amountValue == null || amountValue <= 0.0) {
+                    // Accepts "45,50" as well as "45.50" (see util/Validation.kt).
+                    val amountValue = InputValidation.parseAmount(amount)
+                    if (amountValue == null) {
                         amountError = true
                         return@PulsePrimaryButton
                     }
@@ -288,7 +274,7 @@ fun AddExpenseScreen(
                         startTime = startTime.format(TIME_FORMAT),
                         endTime = endTime?.format(TIME_FORMAT) ?: "",
                         description = description,
-                        receiptUri = receiptUri?.toString(),
+                        receiptUri = receiptUri, // compressed + uploaded to Firestore by the ViewModel
                         recurrence = if (isRecurring) recurrenceType else RecurrenceType.NONE,
                         customCategoryName = selectedCustomCategory
                     )
@@ -298,7 +284,7 @@ fun AddExpenseScreen(
         }
     }
 
-    // "+ Add new category" dialog — Part 2 brief: "the user must be able to create categories."
+    // "+ Add new category" dialog.
     if (showAddCategoryDialog) {
         AlertDialog(
             onDismissRequest = { showAddCategoryDialog = false },
@@ -394,8 +380,7 @@ fun AddExpenseScreen(
     }
 }
 
-/** A bordered, tappable field that looks like the app's text fields but opens a picker instead
- *  of a keyboard — used for date and time so the user never has to type a format-sensitive string. */
+/** A bordered, tappable field that looks like the app's text fields but opens a picker instead of a keyboard. */
 @Composable
 private fun PickerField(
     label: String,

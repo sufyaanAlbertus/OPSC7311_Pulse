@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// Pulse — Cloud Firestore security rules.
+// Paste into Firebase console → Firestore Database → Rules → Publish.
+//
+// 1. Only a signed-in user can touch data, and only their own: users/{their uid}/...
+// 2. Expense writes are validated on the server, so a modified app can't store bad data
+//    (amount must be a positive number under R10 million, short description, valid category).
+// 3. Anything not listed below is denied by default.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function validExpense() {
+      let d = request.resource.data;
+      return d.amount is number && d.amount > 0 && d.amount < 10000000
+        && d.category is string && d.category.size() <= 30
+        && d.dateEpochDay is int
+        && d.description is string && d.description.size() <= 100
+        && d.recurrence in ['NONE', 'WEEKLY', 'MONTHLY'];
+    }
+
+    function validGoal() {
+      let d = request.resource.data;
+      return d.minGoal is number && d.maxGoal is number
+        && d.minGoal >= 0 && d.maxGoal >= 0 && d.maxGoal < 100000000;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /expenses/{expenseId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validExpense();
+      }
+
+      match /receipts/{expenseId} {
+        // Receipt photos are compressed in the app; reject anything close to Firestore's 1 MB limit.
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.imageBase64 is string
+          && request.resource.data.imageBase64.size() < 900000;
+      }
+
+      match /categoryGoals/{key} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validGoal();
+      }
+
+      match /customCategories/{id} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 40;
+      }
+
+      match /badges/{badgeId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+  }
+}

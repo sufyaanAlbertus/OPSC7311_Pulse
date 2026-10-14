@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher icon foreground: cyan hexagon and pulse line. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Hexagon: slightly lighter fill than the background, cyan outline -->
+    <path
+        android:pathData="M54,29 L75.65,41.5 L75.65,66.5 L54,79 L32.35,66.5 L32.35,41.5 Z"
+        android:fillColor="#0A0F14"
+        android:strokeColor="#2FB6F0"
+        android:strokeWidth="3.2"
+        android:strokeLineJoin="round" />
+    <!-- Pulse / heartbeat line -->
+    <path
+        android:pathData="M37.6,54 L46.1,54 L49.9,45.5 L54.9,64.5 L59.1,48.8 L62.7,54 L70.6,54"
+        android:fillColor="#00000000"
+        android:strokeColor="#2FB6F0"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

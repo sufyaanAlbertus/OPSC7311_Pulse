@@ -19,11 +19,14 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -80,9 +83,13 @@ fun PulseApp(
     val currentRoute = backStackEntry?.destination?.route
     val sessionUserId by authViewModel.sessionUserId.collectAsState()
 
-    // Session-driven redirects: a restored session skips straight past Login, and a
-    // logout() call (from the Profile screen) bounces the user back to Login from
-    // wherever they were, clearing the back stack either way.
+    // Snackbar for feedback from the cloud.
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) {
+        expenseViewModel.userMessages.collect { snackbarHostState.showSnackbar(it) }
+    }
+
+    // Session-driven redirects: a restored session skips straight past Login.
     LaunchedEffect(sessionUserId, currentRoute) {
         if (currentRoute == null) return@LaunchedEffect
         if (sessionUserId != null && currentRoute == PulseDestination.Login.route) {
@@ -99,6 +106,7 @@ fun PulseApp(
     val showBottomBar = currentRoute != PulseDestination.Login.route && currentRoute != PulseDestination.AddExpense.route
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
@@ -113,8 +121,7 @@ fun PulseApp(
                             },
                             icon = { Icon(destination.icon(), contentDescription = destination.label) },
                             label = { Text(destination.label.uppercase(), style = MaterialTheme.typography.labelSmall) },
-                            // Matches the app's electric-blue accent instead of Material3's
-                            // default purple/pink selection color.
+                            // Matches the app's electric-blue accent instead of Material3's default purple/pink selection color.
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.primary,
                                 selectedTextColor = MaterialTheme.colorScheme.primary,
@@ -149,7 +156,21 @@ fun PulseApp(
                     authViewModel = authViewModel,
                     isDark = isDark,
                     onToggleTheme = onToggleTheme,
-                    onAddExpense = { navController.navigate(PulseDestination.AddExpense.route) }
+                    onAddExpense = { navController.navigate(PulseDestination.AddExpense.route) },
+                    // The Goal Health card opens the full 30-day tracker on the Goals tab.
+                    onOpenGoals = {
+                        navController.navigate(PulseDestination.Goals.route) {
+                            popUpTo(PulseDestination.Dashboard.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    // The "Your progress" card opens the Badges tab.
+                    onOpenBadges = {
+                        navController.navigate(PulseDestination.Badges.route) {
+                            popUpTo(PulseDestination.Dashboard.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable(PulseDestination.AddExpense.route) {

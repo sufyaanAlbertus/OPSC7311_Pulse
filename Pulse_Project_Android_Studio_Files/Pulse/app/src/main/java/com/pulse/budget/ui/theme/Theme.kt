@@ -36,11 +36,7 @@ private val LightScheme = lightColorScheme(
     error = ErrorRed
 )
 
-/**
- * darkTheme defaults to the system setting but is expected to be driven by
- * ThemeViewModel's persisted DataStore preference from the app root, so the
- * runtime toggle in each screen's top bar overrides it instantly app-wide.
- */
+/** App theme; dark/light mode is driven by ThemeViewModel. */
 @Composable
 fun PulseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
