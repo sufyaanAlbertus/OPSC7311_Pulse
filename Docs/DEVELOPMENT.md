@@ -9,8 +9,9 @@
    ```
    git clone https://github.com/<your-account>/<this-repo>.git
    ```
-2. In Android Studio choose **File → Open** and select the **cloned folder itself**
+2. In Android Studio choose **File → Open** and select the **`Pulse_Project_Android_Studio_Files/Pulse`** folder inside the clone
    (the folder that contains `settings.gradle.kts`, `gradlew` and the `app` folder).
+   Don't open the top-level repository folder or the `app` folder.
 3. Wait for **Gradle sync** to finish (the first time it downloads dependencies, which takes a few minutes).
 4. Pick a phone or emulator in the device dropdown and press **Run ▶**.
 
@@ -40,6 +41,7 @@ Keep the Firebase BoM at **33.7.0**. Version 34 and above needs Kotlin 2.x.
 ## Tests
 
 ```
+cd Pulse_Project_Android_Studio_Files/Pulse
 ./gradlew testDebugUnitTest        (Windows: gradlew testDebugUnitTest)
 ```
 35 JUnit tests in `app/src/test/java/com/pulse/budget/util/`. They also run automatically in GitHub Actions on every push.
@@ -59,7 +61,7 @@ Keep the Firebase BoM at **33.7.0**. Version 34 and above needs Kotlin 2.x.
    **Authentication → Settings → Password policy**, require upper/lower case, numbers and symbols
    with a minimum length of 8, to match the app's own policy.
 4. **Firestore Database → Create database** (production mode), then paste the contents of
-   [`firestore.rules`](../firestore.rules) into the **Rules** tab and click **Publish**.
+   [`firestore.rules`](../Pulse_Project_Android_Studio_Files/Pulse/firestore.rules) into the **Rules** tab and click **Publish**.
 
 ## Project structure
 

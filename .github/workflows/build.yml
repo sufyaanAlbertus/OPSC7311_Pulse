@@ -1,15 +1,7 @@
 name: Android CI
 
-# Runs on every push / pull request to main (and manually from the Actions tab):
-#   1. checks out a FRESH clone of the repository — proving it can be cloned and built by anyone
-#   2. runs all unit tests
-#   3. builds the APK
-#   4. on pushes to main: publishes the APK as "Pulse.apk" on the repository's Releases page,
-#      so an assessor can download and install it straight onto a phone — no Android Studio needed.
-#
-# Based on the guides referenced in the brief:
-#   https://github.com/marketplace/actions/automated-build-android-app-with-github-action
-#   https://github.com/IMAD5112/Github-actions/blob/main/.github/workflows/build.yml
+# Builds, tests and publishes the Pulse APK.
+# The Android project lives in Pulse_Project_Android_Studio_Files/Pulse.
 
 on:
   push:
@@ -19,11 +11,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # needed to create the GitHub Release with the APK
+  contents: write
+
+env:
+  PROJECT_DIR: Pulse_Project_Android_Studio_Files/Pulse
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Pulse_Project_Android_Studio_Files/Pulse
 
     steps:
       - name: Checkout repository
@@ -35,11 +33,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
+          cache-dependency-path: |
+            Pulse_Project_Android_Studio_Files/Pulse/**/*.gradle*
+            Pulse_Project_Android_Studio_Files/Pulse/**/gradle-wrapper.properties
 
       - name: Check Firebase config is present
         run: |
           if [ ! -f app/google-services.json ]; then
-            echo "::error::app/google-services.json is missing from the repository. Commit it (see docs/DEVELOPMENT.md)."
+            echo "::error::app/google-services.json is missing from the repository."
             exit 1
           fi
 
@@ -54,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-report
-          path: app/build/reports/tests/testDebugUnitTest/
+          path: ${{ env.PROJECT_DIR }}/app/build/reports/tests/testDebugUnitTest/
 
       - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
@@ -66,10 +67,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Pulse-apk
-          path: Pulse.apk
+          path: ${{ env.PROJECT_DIR }}/Pulse.apk
 
-      # Publishes a new release for every push to main and marks it "Latest", so the README link
-      # .../releases/latest/download/Pulse.apk always downloads the newest working build.
       - name: Publish APK to GitHub Releases
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
@@ -77,7 +76,7 @@ jobs:
           tag_name: v2.0.${{ github.run_number }}
           name: Pulse v2.0 (build ${{ github.run_number }})
           body: |
-            **Install:** download `Pulse.apk` below on your Android phone (Android 8.0+), open it and tap Install.
-            Test login — username: `lecturer` · password: `Pulse@2026`
-          files: Pulse.apk
+            Download Pulse.apk below on an Android phone (Android 8.0+), open it and tap Install.
+            Test login: username `lecturer` · password `Pulse@2026`
+          files: ${{ env.PROJECT_DIR }}/Pulse.apk
           make_latest: true

@@ -53,7 +53,6 @@ fun qualifyingBadges(s: BadgeStats): Set<String> {
     return earned
 }
 
-// .
 
 data class BadgeProgress(
     val current: Int,
