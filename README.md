@@ -26,14 +26,15 @@
 
 ## How to install the app
 
-You don't need Android Studio for this. It takes about two minutes.
+You can run Pulse on a Windows PC using an Android emulator. It takes about five minutes.
 
-1. On an Android phone (Android 8.0 or newer), open this link: **[Download Pulse.apk](../../releases/latest/download/Pulse.apk)**
+### Option 1: Install the APK (quickest)
+
+1. **Download the app** on your PC: **[Pulse.apk](../../releases/latest/download/Pulse.apk)**
    You can also find it on the [Releases page](../../releases/latest) or in the [`Pulse_Apk_Build`](Pulse_Apk_Build/) folder.
-2. Open the downloaded file and tap **Install**.
-   - If your phone asks, allow your browser to install apps.
-   - If Google Play Protect warns you, tap **More details → Install anyway**. It shows this for any app that isn't from the Play Store.
-3. Open Pulse and log in with our test account:
+2. **Start an emulator.** In Android Studio, open **Device Manager** (phone icon on the right side) and press the play button next to a phone, for example a **Pixel 8**. Wait until it shows the home screen.
+3. **Drag `Pulse.apk` onto the emulator window.** It installs by itself.
+4. **Open Pulse** from the emulator's app list and log in with our test account:
 
    | Username | Password |
    |---|---|
@@ -41,15 +42,19 @@ You don't need Android Studio for this. It takes about two minutes.
 
    This account already has some expenses, goals and badges. You can also tap **New here? Register** and make your own account.
 
-You need an internet connection, because the data is saved online.
+**No Android Studio?** Install a free Android emulator like [BlueStacks](https://www.bluestacks.com) or [LDPlayer](https://www.ldplayer.net), then double-click `Pulse.apk` (or drag it onto the emulator) to install it.
 
-### Running it from Android Studio instead
+If you don't have a phone in Device Manager yet, click **+ → Create Virtual Device**, pick **Pixel 8**, choose a system image with **Google Play** or **Google APIs**, and click **Finish**.
+
+### Option 2: Run it from the source code
 
 1. Open Android Studio and go to **File → Open**.
 2. Select the **`Pulse_Project_Android_Studio_Files/Pulse`** folder.
-3. Wait for Gradle to finish syncing, then press **Run**.
+3. Wait for Gradle to finish syncing, choose the emulator at the top, and press **Run**.
 
 Nothing else needs to be set up. More detail is in [Docs/DEVELOPMENT.md](Docs/DEVELOPMENT.md).
+
+> The PC needs an internet connection, because the app saves its data online.
 
 ---
 
@@ -167,7 +172,7 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 |---|---|
 | Use GitHub properly and keep the setup simple | Made the repo public, added everything the build needs, and GitHub Actions now builds and tests every push |
 | Add an overview, features, test login and clear APK directions to the README | Rewrote this README with those sections at the top |
-| The APK should install without Android Studio | Every push puts `Pulse.apk` on the Releases page, with a direct download link above |
+| The APK should install without Android Studio | Every push puts `Pulse.apk` on the Releases page. It can be dragged onto any emulator (Android Studio, BlueStacks or LDPlayer) to install |
 | The Android Studio steps were too complicated | Cut them down to three steps. The extra detail is in [DEVELOPMENT.md](Docs/DEVELOPMENT.md) |
 | The project should run with the normal Run button | Everything needed is in the repo, so you just open the folder and press Run |
 | Improve security with strong passwords | Added strong password rules, a live checklist, show/hide password and stricter database rules |
