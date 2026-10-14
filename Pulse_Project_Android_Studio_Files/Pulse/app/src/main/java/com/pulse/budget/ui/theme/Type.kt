@@ -23,7 +23,7 @@ val PlexMono = FontFamily(
     Font(R.font.ibm_plex_mono_medium, FontWeight.Medium)
 )
 
-/** Use for every screen title / section header. Uppercase the string yourself when calling. */
+/** Use for every screen title / section header. */
 val HeaderStyle = TextStyle(
     fontFamily = SpaceGrotesk,
     fontWeight = FontWeight.Bold,
@@ -31,7 +31,7 @@ val HeaderStyle = TextStyle(
     letterSpacing = 0.12.em
 )
 
-/** Use for every button label. Uppercase the string yourself when calling. */
+/** Use for every button label. */
 val ButtonLabelStyle = TextStyle(
     fontFamily = SpaceGrotesk,
     fontWeight = FontWeight.Medium,
@@ -50,20 +50,22 @@ val MonoDisplay = TextStyle(
 val MonoBody = TextStyle(
     fontFamily = PlexMono,
     fontWeight = FontWeight.Normal,
-    fontSize = 14.sp
+    fontSize = 15.sp
 )
 
+// Small text 12.5sp, body text 14sp for readability.
 val MonoSmall = TextStyle(
     fontFamily = PlexMono,
     fontWeight = FontWeight.Normal,
-    fontSize = 11.sp
+    fontSize = 12.5.sp,
+    lineHeight = 17.sp
 )
 
 val PulseTypography = Typography(
     headlineMedium = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Bold, fontSize = 22.sp),
     titleMedium = HeaderStyle,
-    bodyLarge = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Normal, fontSize = 15.sp),
-    bodyMedium = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Normal, fontSize = 13.sp),
+    bodyLarge = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 22.sp),
+    bodyMedium = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 19.sp),
     labelLarge = ButtonLabelStyle,
     labelSmall = TextStyle(fontFamily = SpaceGrotesk, fontWeight = FontWeight.Normal, fontSize = 11.sp, textAlign = TextAlign.Center)
 )

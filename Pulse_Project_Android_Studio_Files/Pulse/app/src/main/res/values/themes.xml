@@ -1,3 +1,8 @@
 <resources>
-    <style name="Theme.Pulse" parent="android:Theme.Material.NoActionBar" />
+    <!-- Dark window background to avoid a white flash on launch. -->
+    <style name="Theme.Pulse" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/pulse_dark_background</item>
+        <item name="android:statusBarColor">@color/pulse_dark_background</item>
+        <item name="android:navigationBarColor">@color/pulse_dark_background</item>
+    </style>
 </resources>

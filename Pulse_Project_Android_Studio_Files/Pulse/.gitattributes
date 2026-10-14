@@ -1,0 +1,12 @@
+# Keep line endings correct so the project builds on Windows AND on GitHub Actions (Linux).
+# Without this, committing from Windows can turn gradlew's line endings into CRLF and the
+# Actions build fails with "/usr/bin/env: 'sh\r': No such file or directory".
+* text=auto
+gradlew text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.png binary
+*.jpg binary
+*.ttf binary
+*.apk binary

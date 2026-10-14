@@ -102,7 +102,7 @@ fun LoginScreen(authViewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
             }
             Spacer(Modifier.height(6.dp))
             Text(
-                text = if (profileImageUri != null) "Tap to change photo" else "Add a profile picture (optional)",
+                text = if (profileImageUri != null) "Change photo" else "Add photo (optional)",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -111,6 +111,7 @@ fun LoginScreen(authViewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         Spacer(Modifier.height(32.dp))
 
         PulseTextField(value = username, onValueChange = { username = it; authViewModel.clearError() }, label = "Username")
+
         Spacer(Modifier.height(12.dp))
         PulseTextField(
             value = password,
@@ -121,6 +122,9 @@ fun LoginScreen(authViewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
         // Confirm password — register mode only.
         if (isRegisterMode) {
+            // Live password-strength checklist (strong password policy).
+            Spacer(Modifier.height(8.dp))
+            com.pulse.budget.ui.components.PasswordStrengthMeter(password = password, username = username)
             Spacer(Modifier.height(12.dp))
             PulseTextField(
                 value = confirmPassword,
@@ -160,10 +164,12 @@ fun LoginScreen(authViewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                             confirmPasswordError = true
                             return@PulsePrimaryButton
                         }
+                        // Registers with Firebase Authentication.
                         authViewModel.register(
                             username = username,
                             password = password,
-                            profileImageUri = profileImageUri?.toString(),
+                            confirmPassword = confirmPassword,
+                            profileImageUri = profileImageUri,
                             onSuccess = onLoginSuccess
                         )
                     } else {
@@ -174,14 +180,6 @@ fun LoginScreen(authViewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
 
-        if (!isRegisterMode) {
-            Text(
-                text = "Forgot password?",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.height(8.dp))
-        }
         Text(
             text = if (isRegisterMode) "Have an account? Login" else "New here? Register",
             style = MaterialTheme.typography.bodyMedium,

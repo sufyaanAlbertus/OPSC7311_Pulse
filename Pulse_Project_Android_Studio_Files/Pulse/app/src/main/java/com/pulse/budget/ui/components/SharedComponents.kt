@@ -32,6 +32,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -91,8 +97,12 @@ fun PulseTextField(
     label: String,
     modifier: Modifier = Modifier,
     isMonospace: Boolean = false,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    // Shows the number keypad for money fields.
+    isNumber: Boolean = false
 ) {
+    // Password fields get a show/hide eye button so users can check a long, strong password before submitting it.
+    var passwordVisible by remember { mutableStateOf(false) }
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -101,12 +111,22 @@ fun PulseTextField(
         shape = RoundedCornerShape(0.dp),
         textStyle = if (isMonospace) MonoBody else MaterialTheme.typography.bodyLarge,
         singleLine = true,
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = if (isPassword) {
-            KeyboardOptions(keyboardType = KeyboardType.Password)
-        } else {
-            KeyboardOptions.Default
-        }
+        visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = when {
+            isPassword -> KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false)
+            isNumber -> KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            else -> KeyboardOptions.Default
+        },
+        trailingIcon = if (isPassword) {
+            {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                    )
+                }
+            }
+        } else null
     )
 }
 
@@ -122,8 +142,7 @@ fun PulseTopBar(title: String, isDark: Boolean, onToggleTheme: () -> Unit, onBac
                     Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
                 }
             } else {
-                // App logo, shown on every top-level screen (no back button) instead of
-                // leaving that space empty.
+                // App logo, shown on every top-level screen (no back button) instead of leaving that space empty.
                 HexIconTile(icon = Icons.Outlined.Bolt, size = 40.dp, modifier = Modifier.padding(start = 12.dp))
             }
         },
@@ -146,22 +165,28 @@ fun PulseTopBar(title: String, isDark: Boolean, onToggleTheme: () -> Unit, onBac
 
 /** Simple horizontal progress bar with sharp corners, used across Categories, Goals, and XP. */
 @Composable
-fun SharpProgressBar(progress: Float, modifier: Modifier = Modifier, overLimit: Boolean = false) {
+fun SharpProgressBar(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    overLimit: Boolean = false,
+    // Thicker bars where progress is the key information (budget, XP).
+    barHeight: androidx.compose.ui.unit.Dp = 6.dp
+) {
     val trackColor = MaterialTheme.colorScheme.outline
     val fillColor = if (overLimit) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val clamped = progress.coerceIn(0f, 1f)
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(6.dp)
+            .height(barHeight)
             .background(trackColor)
     ) {
-        Row(modifier = Modifier.fillMaxWidth().height(6.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().height(barHeight)) {
             if (clamped > 0f) {
                 Box(
                     modifier = Modifier
                         .weight(clamped)
-                        .height(6.dp)
+                        .height(barHeight)
                         .background(fillColor)
                 )
             }

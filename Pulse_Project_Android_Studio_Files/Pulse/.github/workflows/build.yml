@@ -1,13 +1,25 @@
 name: Android CI
 
-# Builds and tests the app on every push/PR to main, and lets you trigger it manually.
-# Referenced in README.md per the Part 2 submission brief.
+# Runs on every push / pull request to main (and manually from the Actions tab):
+#   1. checks out a FRESH clone of the repository — proving it can be cloned and built by anyone
+#   2. runs all unit tests
+#   3. builds the APK
+#   4. on pushes to main: publishes the APK as "Pulse.apk" on the repository's Releases page,
+#      so an assessor can download and install it straight onto a phone — no Android Studio needed.
+#
+# Based on the guides referenced in the brief:
+#   https://github.com/marketplace/actions/automated-build-android-app-with-github-action
+#   https://github.com/IMAD5112/Github-actions/blob/main/.github/workflows/build.yml
+
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+
+permissions:
+  contents: write   # needed to create the GitHub Release with the APK
 
 jobs:
   build:
@@ -22,18 +34,50 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
+
+      - name: Check Firebase config is present
+        run: |
+          if [ ! -f app/google-services.json ]; then
+            echo "::error::app/google-services.json is missing from the repository. Commit it (see docs/DEVELOPMENT.md)."
+            exit 1
+          fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Run unit tests
-        run: ./gradlew test --stacktrace
+        run: ./gradlew testDebugUnitTest --stacktrace
 
-      - name: Build debug APK
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-report
+          path: app/build/reports/tests/testDebugUnitTest/
+
+      - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk Pulse.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pulse-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Pulse-apk
+          path: Pulse.apk
+
+      # Publishes a new release for every push to main and marks it "Latest", so the README link
+      # .../releases/latest/download/Pulse.apk always downloads the newest working build.
+      - name: Publish APK to GitHub Releases
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.0.${{ github.run_number }}
+          name: Pulse v2.0 (build ${{ github.run_number }})
+          body: |
+            **Install:** download `Pulse.apk` below on your Android phone (Android 8.0+), open it and tap Install.
+            Test login — username: `lecturer` · password: `Pulse@2026`
+          files: Pulse.apk
+          make_latest: true

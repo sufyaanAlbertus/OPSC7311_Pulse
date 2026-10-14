@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.CloudDone
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.pulse.budget.ui.components.Base64Image
 import com.pulse.budget.ui.components.HexIconTile
 import com.pulse.budget.ui.components.HexagonShape
 import com.pulse.budget.ui.components.PulseOutlinedButton
@@ -55,7 +56,7 @@ fun ProfileScreen(
 ) {
     val username by authViewModel.currentUsername.collectAsState()
     val memberSinceEpochDay by authViewModel.memberSinceEpochDay.collectAsState()
-    val profileImageUri by authViewModel.currentProfileImageUri.collectAsState()
+    val profileImage by authViewModel.currentProfileImage.collectAsState()
     val streakDays by expenseViewModel.streakDays.collectAsState()
     val xp by expenseViewModel.xp.collectAsState()
     val monthTotal by expenseViewModel.monthTotal.collectAsState()
@@ -66,7 +67,7 @@ fun ProfileScreen(
     // Tap the avatar at any time (not just during registration) to change the profile picture.
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> if (uri != null) authViewModel.updateProfilePicture(uri.toString()) }
+    ) { uri: Uri? -> if (uri != null) authViewModel.updateProfilePicture(uri) }
 
     Scaffold(topBar = { PulseTopBar(title = "Profile", isDark = isDark, onToggleTheme = onToggleTheme) }) { padding ->
         Column(
@@ -87,9 +88,10 @@ fun ProfileScreen(
                     .clickable { imagePicker.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
-                if (profileImageUri != null) {
-                    AsyncImage(
-                        model = profileImageUri,
+                if (profileImage != null) {
+                    // The picture is stored in Firestore as compressed Base64.
+                    Base64Image(
+                        base64 = profileImage,
                         contentDescription = "Profile picture",
                         modifier = Modifier.size(72.dp).clip(HexagonShape()),
                         contentScale = ContentScale.Crop
@@ -107,7 +109,7 @@ fun ProfileScreen(
                     modifier = Modifier.size(12.dp)
                 )
                 Spacer(Modifier.width(4.dp))
-                Text("Tap to change photo", style = MonoSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Change photo", style = MonoSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(Modifier.height(12.dp))
@@ -140,6 +142,20 @@ fun ProfileScreen(
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Expenses logged", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text("${monthExpenses.size}", style = MonoBody)
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            SharpCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    androidx.compose.material3.Icon(
+                        Icons.Outlined.CloudDone,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text("Synced to the cloud", style = MaterialTheme.typography.bodyMedium)
                 }
             }
 

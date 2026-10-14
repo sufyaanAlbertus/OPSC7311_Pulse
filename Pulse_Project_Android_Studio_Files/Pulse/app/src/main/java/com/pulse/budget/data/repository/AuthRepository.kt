@@ -1,82 +1,99 @@
 package com.pulse.budget.data.repository
 
+/*
+ * References:
+ *  - Firebase (2025) Password authentication on Android. https://firebase.google.com/docs/auth/android/password-auth
+ *  - Anthropic (2026) Claude [Large language model] — used as a coding assistant; see AI declaration in README.
+ */
+
 import android.util.Log
-import com.pulse.budget.data.local.AppDatabase
-import com.pulse.budget.data.local.UserEntity
-import java.security.MessageDigest
-import java.time.LocalDate
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.pulse.budget.util.AuthValidation
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 
 private const val TAG = "AuthRepository"
 
 sealed class AuthResult {
-    data class Success(val userId: Long) : AuthResult()
+    data class Success(val uid: String) : AuthResult()
     data class Failure(val message: String) : AuthResult()
 }
 
-/**
- * Brief (Part 2) asks for login with "a username and password". The stored field is still
- * called `email` on UserEntity/UserDao for backward compatibility with the schema, but it is
- * treated as a plain username here — no "@" or email-format requirement.
- */
-class AuthRepository(db: AppDatabase) {
-    private val userDao = db.userDao()
+/** Login and registration use Firebase Authentication. */
+class AuthRepository(
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
+    private val pulseRepository: PulseRepository = PulseRepository()
+) {
 
-    private fun hash(password: String): String {
-        val digest = MessageDigest.getInstance("SHA-256").digest(password.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
-    }
+    val currentUid: String? get() = auth.currentUser?.uid
 
-    suspend fun register(username: String, password: String, profileImageUri: String? = null): AuthResult {
-        val normalized = username.trim().lowercase()
-        if (normalized.length < 3) {
-            return AuthResult.Failure("Username must be at least 3 characters.")
+    suspend fun register(username: String, password: String, profileImageBase64: String?): AuthResult {
+        AuthValidation.validateUsername(username)?.let { return AuthResult.Failure(it) }
+        AuthValidation.validatePassword(password, username)?.let { return AuthResult.Failure(it) }
+        val normalized = AuthValidation.normalizeUsername(username)
+
+        return try {
+            val result = auth.createUserWithEmailAndPassword(AuthValidation.usernameToEmail(normalized), password).await()
+            val uid = result.user?.uid ?: return AuthResult.Failure("Registration failed. Please try again.")
+            Log.d(TAG, "Firebase Auth: registered '$normalized' -> uid=$uid")
+
+            // Create the user's Firestore documents straight away.
+            pulseRepository.createUserProfile(uid, normalized, profileImageBase64)
+            pulseRepository.seedBadgesIfMissing(uid)
+            AuthResult.Success(uid)
+        } catch (e: Exception) {
+            Log.e(TAG, "Firebase Auth: register failed for '$normalized'", e)
+            AuthResult.Failure(friendlyMessage(e))
         }
-        if (password.length < 6) {
-            return AuthResult.Failure("Password must be at least 6 characters.")
-        }
-        if (userDao.findByEmail(normalized) != null) {
-            return AuthResult.Failure("That username is already taken.")
-        }
-        val id = userDao.insert(
-            UserEntity(
-                email = normalized,
-                passwordHash = hash(password),
-                createdAtEpochDay = LocalDate.now().toEpochDay(),
-                profileImageUri = profileImageUri
-            )
-        )
-        Log.d(TAG, "Registered new user: '$normalized' -> id=$id")
-        return AuthResult.Success(id)
     }
 
     suspend fun login(username: String, password: String): AuthResult {
-        val normalized = username.trim().lowercase()
-        val user = userDao.findByEmail(normalized)
-        if (user == null) {
-            Log.d(TAG, "Login failed: no user '$normalized'")
-            return AuthResult.Failure("No account found for that username.")
+        val normalized = AuthValidation.normalizeUsername(username)
+        if (normalized.isBlank() || password.isBlank()) {
+            return AuthResult.Failure("Enter your username and password.")
         }
-        return if (user.passwordHash == hash(password)) {
-            Log.d(TAG, "Login success: '$normalized' -> id=${user.id}")
-            AuthResult.Success(user.id)
-        } else {
-            Log.d(TAG, "Login failed: wrong password for '$normalized'")
-            AuthResult.Failure("Incorrect password.")
+        return try {
+            val result = auth.signInWithEmailAndPassword(AuthValidation.usernameToEmail(normalized), password).await()
+            val uid = result.user?.uid ?: return AuthResult.Failure("Login failed. Please try again.")
+            Log.d(TAG, "Firebase Auth: login success '$normalized' -> uid=$uid")
+            AuthResult.Success(uid)
+        } catch (e: Exception) {
+            Log.e(TAG, "Firebase Auth: login failed for '$normalized'", e)
+            AuthResult.Failure(friendlyMessage(e))
         }
     }
 
-    /** Looks up the display username for the Profile screen. */
-    suspend fun getUsername(userId: Long): String? = userDao.findById(userId)?.email
+    fun logout() {
+        Log.d(TAG, "Firebase Auth: sign out uid=$currentUid")
+        auth.signOut()
+    }
 
-    /** Looks up when the account was created, for the Profile screen's "member since" line. */
-    suspend fun getCreatedAtEpochDay(userId: Long): Long? = userDao.findById(userId)?.createdAtEpochDay
+    /** Turns Firebase exceptions into messages a user can act on. */
+    private fun friendlyMessage(e: Exception): String = when (e) {
+        is FirebaseAuthUserCollisionException -> "That username is already taken."
+        is FirebaseAuthWeakPasswordException -> "Password is too weak. Use 8+ characters with upper and lower case, a number and a symbol."
+        is FirebaseAuthInvalidUserException -> "No account found for that username."
+        is FirebaseAuthInvalidCredentialsException -> "Incorrect username or password."
+        // Firebase blocks a device after many failed attempts (protects against password guessing).
+        is FirebaseTooManyRequestsException -> "Too many attempts. For your security, please wait a few minutes and try again."
+        is FirebaseNetworkException -> "No internet connection. Check your data or Wi-Fi and try again."
+        else -> e.localizedMessage ?: "Something went wrong. Please try again."
+    }
 
-    /** Looks up the current profile picture, for the Profile screen's avatar. */
-    suspend fun getProfileImageUri(userId: Long): String? = userDao.findById(userId)?.profileImageUri
-
-    /** Called when the user taps their avatar on the Profile screen to change it. */
-    suspend fun updateProfileImage(userId: Long, uri: String?) {
-        Log.d(TAG, "Profile picture updated for user id=$userId")
-        userDao.updateProfileImage(userId, uri)
+    companion object {
+        /** Emits the signed-in uid (or null) every time the Firebase login state changes. */
+        fun authState(auth: FirebaseAuth = FirebaseAuth.getInstance()): Flow<String?> = callbackFlow {
+            val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser?.uid) }
+            auth.addAuthStateListener(listener)
+            awaitClose { auth.removeAuthStateListener(listener) }
+        }
     }
 }

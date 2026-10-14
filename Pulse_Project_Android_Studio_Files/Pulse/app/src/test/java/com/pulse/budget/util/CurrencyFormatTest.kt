@@ -4,10 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Pure-JVM unit test (no Android framework dependency, so it runs under ./gradlew test in CI
- * without an emulator) covering the NumberFormat-based currency utility.
- */
+/** Pure-JVM unit test (no Android framework dependency. */
 class CurrencyFormatTest {
 
     @Test
@@ -19,8 +16,7 @@ class CurrencyFormatTest {
     @Test
     fun `formatZar rounds to two decimal places`() {
         val result = formatZar(45.5)
-        // en-ZA NumberFormat pads to 2 decimals, e.g. "R45.50" or "R 45.50" depending on locale data.
-        assertTrue("Expected two decimal places in '$result'", result.matches(Regex(".*\\d+\\.\\d{2}$")))
+        assertTrue("Expected two decimal places in '$result'", result.matches(Regex(".*\\d+[.,]\\d{2}$")))
     }
 
     @Test

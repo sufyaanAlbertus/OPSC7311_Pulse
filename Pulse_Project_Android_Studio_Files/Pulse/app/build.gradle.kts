@@ -1,7 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp")
+    // Reads app/google-services.json for Firebase.
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -10,13 +11,11 @@ android {
 
     defaultConfig {
         applicationId = "com.pulse.budget"
-        // Aligned to the two SDK platforms actually installed on this machine (API 34 and
-        // API 36) — nothing in this project now depends on a platform that isn't present
-        // locally, which removes a class of Gradle sync issues entirely.
-        minSdk = 34
+        // Android 8.0+ so the app installs on most phones.
+        minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
     }
 
     buildFeatures { compose = true }
@@ -27,6 +26,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+
+    // Lets unit tests call code that touches android.util.Log without crashing on the JVM.
+    testOptions { unitTests.isReturnDefaultValues = true }
 }
 
 dependencies {
@@ -44,13 +46,21 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-
+    // DataStore: dark/light theme setting.
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
+    // Coil: photo previews.
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // EXIF: keeps uploaded photos upright.
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
+    // Firebase Authentication + Cloud Firestore (BoM 33.7.0 matches Kotlin 1.9.24).
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    // .await() for Firebase Tasks.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     testImplementation("junit:junit:4.13.2")
 }

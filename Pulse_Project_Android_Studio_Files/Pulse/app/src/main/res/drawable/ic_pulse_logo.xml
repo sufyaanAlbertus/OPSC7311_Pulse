@@ -1,16 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Full Pulse icon as one drawable (dark rounded tile + hexagon + pulse line).
+     Kept so that anything still pointing at @drawable/ic_pulse_logo shows the new design. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:pathData="M54,14 L88,32 L88,68 L54,86 L20,68 L20,32 Z"
-        android:strokeColor="#3D8FE0"
-        android:strokeWidth="3"
-        android:fillColor="#00000000" />
+        android:pathData="M24,4 L84,4 A20,20 0 0 1 104,24 L104,84 A20,20 0 0 1 84,104 L24,104 A20,20 0 0 1 4,84 L4,24 A20,20 0 0 1 24,4 Z"
+        android:fillColor="#060809" />
     <path
-        android:pathData="M32,54 L44,54 L48,44 L54,64 L60,48 L64,54 L76,54"
-        android:strokeColor="#3D8FE0"
-        android:strokeWidth="3"
-        android:fillColor="#00000000" />
+        android:pathData="M54,29 L75.65,41.5 L75.65,66.5 L54,79 L32.35,66.5 L32.35,41.5 Z"
+        android:fillColor="#0A0F14"
+        android:strokeColor="#2FB6F0"
+        android:strokeWidth="3.2"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M37.6,54 L46.1,54 L49.9,45.5 L54.9,64.5 L59.1,48.8 L62.7,54 L70.6,54"
+        android:fillColor="#00000000"
+        android:strokeColor="#2FB6F0"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 </vector>

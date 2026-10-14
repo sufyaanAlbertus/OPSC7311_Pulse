@@ -1,5 +1,6 @@
 # Built application files
 *.apk
+# (The APK is published automatically to GitHub Releases by .github/workflows/build.yml)
 *.aar
 *.ap_
 *.aab
@@ -45,5 +46,6 @@ Thumbs.db
 *.jks
 *.keystore
 
-# Google Services (if added later)
-# google-services.json
+# Firebase config: app/google-services.json is intentionally COMMITTED so the lecturer and
+# GitHub Actions can build the app. It is not a secret — access is protected by Firestore
+# security rules + Firebase Authentication. (Alternative: GOOGLE_SERVICES_JSON secret, see build.yml.)

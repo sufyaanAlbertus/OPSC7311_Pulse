@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.pulse.budget.data.local.CategoryType
+import com.pulse.budget.data.model.CategoryType
 
 fun CategoryType.icon(): ImageVector = when (this) {
     CategoryType.HOUSING -> Icons.Outlined.Home
@@ -31,26 +31,7 @@ fun CategoryType.icon(): ImageVector = when (this) {
     CategoryType.OTHER -> Icons.Outlined.MoreHoriz
 }
 
-fun CategoryType.label(): String = when (this) {
-    CategoryType.HOUSING -> "Housing"
-    CategoryType.GROCERIES -> "Groceries"
-    CategoryType.TRANSPORT -> "Transport"
-    CategoryType.FOOD_DINING -> "Food & Dining"
-    CategoryType.UTILITIES -> "Utilities"
-    CategoryType.ENTERTAINMENT -> "Entertainment"
-    CategoryType.HEALTH -> "Health"
-    CategoryType.SHOPPING -> "Shopping"
-    CategoryType.EDUCATION -> "Education"
-    CategoryType.INCOME -> "Income"
-    CategoryType.SAVINGS -> "Savings"
-    CategoryType.OTHER -> "Other"
-}
-
-/**
- * Hexagon-outline icon tile. Shared by the category row on Dashboard, the
- * Expense List rows, Category Breakdown, and the badge grids (pass any icon
- * for badges instead of a category).
- */
+/** Hexagon-outline icon tile. */
 @Composable
 fun HexIconTile(
     icon: ImageVector,
