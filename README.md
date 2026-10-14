@@ -28,7 +28,7 @@
 
 You can run Pulse on a Windows PC using an Android emulator. It takes about five minutes.
 
-### Option 1: Install the APK (quickest)
+### Option 1: Install the APK 
 
 1. **Download the app** on your PC: **[Pulse.apk](../../releases/latest/download/Pulse.apk)**
    You can also find it on the [Releases page](../../releases/latest) or in the [`Pulse_Apk_Build`](Pulse_Apk_Build/) folder.
@@ -41,10 +41,6 @@ You can run Pulse on a Windows PC using an Android emulator. It takes about five
    | `lecturer` | `Pulse@2026` |
 
    This account already has some expenses, goals and badges. You can also tap **New here? Register** and make your own account.
-
-**No Android Studio?** Install a free Android emulator like [BlueStacks](https://www.bluestacks.com) or [LDPlayer](https://www.ldplayer.net), then double-click `Pulse.apk` (or drag it onto the emulator) to install it.
-
-If you don't have a phone in Device Manager yet, click **+ → Create Virtual Device**, pick **Pixel 8**, choose a system image with **Google Play** or **Google APIs**, and click **Finish**.
 
 ### Option 2: Run it from the source code
 
