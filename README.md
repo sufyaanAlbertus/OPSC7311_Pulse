@@ -154,11 +154,15 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 
 ## GitHub and testing
 
-- We used Git and GitHub for the whole project and committed our work regularly.
-- **GitHub Actions** runs every time we push to `main`. It downloads a fresh copy of the repo, runs our tests, builds the app and puts the new `Pulse.apk` on the [Releases page](../../releases/latest).
-- We wrote **35 unit tests** for the goal calculations, recurring dates, badges, password rules, input checks and money formatting.
+![Android CI](https://github.com/sufyaanAlbertus/OPSC7311_Pulse/actions/workflows/build.yml/badge.svg)
 
-![GitHub Actions](Docs/images/github-actions-run.png)
+* We used Git and GitHub for the whole project and committed our work regularly. You can see all our commits in the [commit history](https://github.com/sufyaanAlbertus/OPSC7311_Pulse/commits/main).
+* GitHub Actions runs every time we push to `main`. It downloads a fresh copy of the repo, runs our tests, builds the app and puts the new `Pulse.apk` on the [Releases page](https://github.com/sufyaanAlbertus/OPSC7311_Pulse/releases/latest). The workflow is in [`.github/workflows/build.yml`](.github/workflows/build.yml).
+* We wrote 35 unit tests for the goal calculations, recurring dates, badges, password rules, input checks and money formatting. They're in `Pulse_Project_Android_Studio_Files/Pulse/app/src/test/`.
+
+![All workflow runs passing](Docs/images/github-actions.png)
+
+![Run details](Docs/images/github-actions-run.png)!
 
 ---
 
