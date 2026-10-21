@@ -162,7 +162,7 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 
 ![All workflow runs passing](Docs/images/github-actions.png)
 
-![Run details](Docs/images/github-actions-run.png)!
+![Run details](Docs/images/github-actions-run.png)
 
 ---
 
