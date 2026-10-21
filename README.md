@@ -158,7 +158,7 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 - **GitHub Actions** runs every time we push to `main`. It downloads a fresh copy of the repo, runs our tests, builds the app and puts the new `Pulse.apk` on the [Releases page](../../releases/latest).
 - We wrote **35 unit tests** for the goal calculations, recurring dates, badges, password rules, input checks and money formatting.
 
-![GitHub Actions](Docs/images/screenshots/github-actions.png)
+![GitHub Actions](Docs/images/github-actions-run.png)
 
 ---
 
