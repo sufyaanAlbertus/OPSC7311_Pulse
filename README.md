@@ -186,17 +186,25 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 
 ## Screenshots
 
-| Login | Home | Add Expense |
+| Login | Register (strong password checklist) | Home |
 |---|---|---|
-| ![](Docs/images/screenshots/login.png) | ![](Docs/images/screenshots/dashboard.png) | ![](Docs/images/screenshots/add-expense.png) |
+| ![](Docs/images/screenshots/login.png) | ![](Docs/images/screenshots/register.png) | ![](Docs/images/screenshots/dashboard.png) |
 
-| Categories | Goals | Badges |
+| Home (scrolled) | Add Expense | Expenses |
+|---|---|---|
+| ![](Docs/images/screenshots/dashboard-2.png) | ![](Docs/images/screenshots/add-expense.png) | ![](Docs/images/screenshots/expenses.png) |
+
+| Categories graph | Goals and 30-day tracker | Badges |
 |---|---|---|
 | ![](Docs/images/screenshots/categories-graph.png) | ![](Docs/images/screenshots/goals-tracker.png) | ![](Docs/images/screenshots/badges.png) |
 
-| Expenses | Data in Firebase |
-|---|---|
-| ![](Docs/images/screenshots/expenses.png) | ![](Docs/images/screenshots/firestore-console.png) |
+| Profile |
+|---|
+| ![](Docs/images/screenshots/profile.png) |
+
+**Data in Firebase (Cloud Firestore)**
+
+![Data in Firebase](Docs/images/screenshots/firestore-console.png)
 
 ---
 
