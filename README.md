@@ -129,7 +129,7 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 
 ## How it works
 
-![Architecture](Docs/images/architecture.png)
+![Architecture](Docs/images/architecture.jpeg)
 
 - The app uses MVVM. The screens show data from the ViewModels, and the ViewModels get their data from two repository classes that talk to Firebase.
 - **Firebase Authentication** handles login. The app turns each username into a private email-style address behind the scenes, because Firebase needs one. No emails are ever sent.
@@ -138,7 +138,7 @@ Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/fil
 - **Writing data:** expenses and receipts are saved together in one batch, so they can't get out of sync.
 - **Logging:** we log every database read and write. In Android Studio's Logcat, search for `PulseRepository` to see them.
 
-![Firestore structure](Docs/images/firestore-structure.png)
+![Firestore structure](Docs/images/firestore-structure.jpeg)
 
 ---
 
