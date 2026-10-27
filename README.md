@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="../../releases/latest/download/Pulse.apk"><b>Download the app (Pulse.apk)</b></a> ·
-  <a href="https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID">Watch the demo video</a>
+  <a href="https://youtu.be/NAjsNCC4Bms">Watch the demo video</a>
 </p>
 
 ---
@@ -88,11 +88,9 @@ All the data is saved online with Firebase, so nothing is lost if you change or 
 
 ## Demo video
 
-**[Watch the demo on YouTube](https://youtu.be/REPLACE_WITH_YOUR_VIDEO_ID)**
+**[Watch the demo on YouTube](https://youtu.be/NAjsNCC4Bms)**
 
-The video was recorded on a real phone and has a voice-over. It starts with a short introduction, goes through every feature, and shows new data appearing in the Firebase console to prove it is saved online.
-
-Background music: "REPLACE_TRACK_TITLE" by REPLACE_ARTIST (REPLACE_SOURCE). See the references below.
+The video was recorded on a emulator and has a voice-over. It starts with a short introduction, goes through every feature, and shows new data appearing in the Firebase console to prove it is saved online.
 
 Our Part 2 prototype demo is [here on Google Drive](https://drive.google.com/file/d/1vIyDEQy-FRMihPeT8eQe4JgcCtjpMu3E/view?usp=sharing).
 
